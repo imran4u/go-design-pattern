@@ -12,6 +12,12 @@ const (
 	blue
 )
 
+var colorMaps = map[Color]string{
+	red:  "Red",
+	gree: "Green",
+	blue: "Blue",
+}
+
 type Size int
 
 const (
@@ -27,7 +33,7 @@ type product struct {
 }
 
 func (p product) string() string {
-	return fmt.Sprintf("Name: %s, color =%v, size = %v", p.name, p.color, p.size)
+	return fmt.Sprintf("Name: %s, color = %s, size = %v", p.name, colorMaps[p.color], p.size)
 }
 
 type Filter struct {
