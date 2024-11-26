@@ -33,6 +33,7 @@ func (p product) string() string {
 type Filter struct {
 }
 
+// it is breaking as we are incresing the responsiblity of products
 func (f Filter) filterBySize(products []product, size Size) []*product {
 	resut := make([]*product, 0)
 
@@ -44,6 +45,8 @@ func (f Filter) filterBySize(products []product, size Size) []*product {
 	return resut
 
 }
+
+// it is breaking as we are incresing the responsiblity of products
 func (f Filter) filterByColor(products []product, color Color) []*product {
 	resut := make([]*product, 0)
 
@@ -56,6 +59,7 @@ func (f Filter) filterByColor(products []product, color Color) []*product {
 
 }
 
+// it is breaking as we are incresing the responsiblity of products
 func (f Filter) filterByColorAndSize(products []product, color Color, size Size) []*product {
 	resut := make([]*product, 0)
 
@@ -66,6 +70,50 @@ func (f Filter) filterByColorAndSize(products []product, color Color, size Size)
 	}
 	return resut
 
+}
+
+// ################################ implementation of open for extension and closed for modification ######
+
+type Specification interface {
+	isSatisfied(p *product) bool
+}
+
+type ColorSpecification struct {
+	Color
+}
+
+func (c ColorSpecification) isSatisfied(p *product) bool {
+	return p.color == c.Color
+}
+
+type SizeSpecification struct {
+	Size
+}
+
+func (s SizeSpecification) isSatisfied(p *product) bool {
+	return s.Size == p.size
+}
+
+type AndSpecification struct {
+	color Color
+	size  Size
+}
+
+func (a AndSpecification) isSatisfied(p *product) bool {
+	return a.size == p.size && a.color == p.color
+}
+
+type BetterFilter struct {
+}
+
+func (b BetterFilter) filter(products []product, s Specification) []*product {
+	resut := make([]*product, 0)
+	for _, p := range products {
+		if s.isSatisfied(&p) {
+			resut = append(resut, &p)
+		}
+	}
+	return resut
 }
 
 func main() {
@@ -96,4 +144,25 @@ func main() {
 	for _, p := range f.filterByColorAndSize(products, gree, small) {
 		fmt.Println(p.string())
 	}
+
+	fmt.Println(" using better filter :  ")
+	bf := BetterFilter{}
+	cs := ColorSpecification{gree}
+	ss := SizeSpecification{small}
+	as := AndSpecification{gree, small}
+	fmt.Println(" filter by color  gree  ")
+	for _, p := range bf.filter(products, cs) {
+		fmt.Println(p.string())
+	}
+
+	fmt.Println(" filter by size small ")
+	for _, p := range bf.filter(products, ss) {
+		fmt.Println(p.string())
+	}
+
+	fmt.Println(" filter by color  gree and size small ")
+	for _, p := range bf.filter(products, as) {
+		fmt.Println(p.string())
+	}
+
 }
