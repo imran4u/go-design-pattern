@@ -8,13 +8,13 @@ type Animal interface {
 
 type Cat struct{}
 
-func (c *Cat) speak() string {
+func (c Cat) speak() string {
 	return "Meow"
 }
 
 type Dog struct{}
 
-func (d *Dog) speak() string {
+func (d Dog) speak() string {
 	return "Bark/ Bhow"
 }
 
